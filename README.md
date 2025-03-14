@@ -194,7 +194,7 @@ and the server service sends a text status code, user ID, session token, and acc
 
 **Method** : `POST`
 
-**Auth required** : Yes
+**Auth required** : YES
 
 **Permissions required** : None
 
