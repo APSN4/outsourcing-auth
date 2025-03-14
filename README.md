@@ -1,5 +1,25 @@
 ## Microservice outsourcing-auth
 
+## 🚀 How to run
+
+### ENV:
+`.env` - file with secrets.  
+```
+POSTGRES_USER=user
+POSTGRES_PW=password
+POSTGRES_DB=outsourcing
+POSTGRES_HOST=localhost
+POSTGRES_PORT=5432
+PGADMIN_MAIL=your@example.com
+PGADMIN_PW=password
+```
+
+### Postgres & pgAdmin
+Create and start the containers. Make sure that you’re inside
+the directory that contains the docker-compose.yml file and run: `docker compose up`.
+
+If you want to use pgAdmin, check out this guide: https://cpit490.gitlab.io/notes/docker-compose-pgsql-pgadmin/  
+
 ## 📖 API Documentation
 
 ### Login into account
