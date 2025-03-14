@@ -1,5 +1,7 @@
 package api
 
+import "core/internal"
+
 type Register struct {
 	FullName     string `json:"full_name"`
 	Email        string `json:"email"`
@@ -15,4 +17,15 @@ type Client struct {
 
 type ClientRegister struct {
 	*Client `json:"user"`
+}
+
+type ResponseClientRegister struct {
+	*internal.StatusResponse `json:"status"`
+	*ResponseUser            `json:"user"`
+}
+
+type ResponseUser struct {
+	ID    uint   `json:"id"`
+	Token string `json:"token"`
+	Type  string `json:"type"`
 }

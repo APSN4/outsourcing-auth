@@ -8,27 +8,29 @@ import (
 )
 
 type ClientService interface {
-	Signup(request *api.ClientRegister) error
+	Signup(request *api.ClientRegister) (database.ClientDB, error)
 }
 
 type clientService struct {
 	repository repository.ClientRepository
 }
 
-func (service *clientService) Signup(request *api.ClientRegister) error {
+func (service *clientService) Signup(request *api.ClientRegister) (database.ClientDB, error) {
 	exists := service.repository.ExistsByEmail(request.Email)
 	if exists {
-		return errors.New("email already exists")
+		return database.ClientDB{}, errors.New("email already exists")
 	}
-	service.repository.Save(&database.ClientDB{
+
+	client := &database.ClientDB{
 		FullName:     request.FullName,
 		Email:        request.Email,
 		Phone:        request.Phone,
 		PasswordHash: request.PasswordHash,
 		Photo:        request.Photo,
 		Type:         request.Type,
-	})
-	return nil
+	}
+	service.repository.Save(client)
+	return *client, nil
 }
 
 func NewClientService(repository repository.ClientRepository) ClientService {
