@@ -6,6 +6,8 @@
 
 Authorization for companies and clients. When the user is logged in, they will have a token that represents a valid session.
 
+<img src="storage/5377573460508798167.jpg" width="256"/>
+
 **URL** : `v1/login`
 
 **Method** : `POST`
@@ -54,6 +56,8 @@ the server service will send a text status code, user ID, session token, and acc
 
 This API provides client registration, 
 and the server service sends a text status code, user ID, session token, and account type:  
+
+<img src="storage/5377573460508798168.jpg" width="256"/>
 
 **URL** : `v1/register/client`
 
@@ -112,6 +116,8 @@ the server service will send a text status code, user ID, session token, and acc
 This API provides company registration,
 and the server service sends a text status code, user ID, session token, and account type:
 
+<img src="storage/5377573460508798169.jpg" width="256"/>
+
 **URL** : `v1/register/company`
 
 **Method** : `POST`
@@ -132,6 +138,7 @@ and the server service sends a text status code, user ID, session token, and acc
 * Password
 * Photo (not necessary)
 * Account type
+* Docs urls
 
 ```json
 {
@@ -147,6 +154,7 @@ and the server service sends a text status code, user ID, session token, and acc
       "type_service": "Car dealership",
       "password": "hash",
       "photo": null,
+      "documents": ["link", "link"],
       "type": "company"
     }
   }
@@ -178,6 +186,9 @@ the server service will send a text status code, user ID, session token, and acc
 
 This API provides company and client account by session token,
 and the server service sends a text status code, user ID, session token, and account type:
+
+<img src="storage/5377573460508798170.jpg" width="256"/>  
+<img src="storage/5377573460508798171.jpg" width="256"/>
 
 **URL** : `v1/account`
 
