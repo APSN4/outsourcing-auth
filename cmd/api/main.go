@@ -10,9 +10,12 @@ func main() {
 
 	v1 := r.Group("v1")
 	{
-		userGroup := r.Group("user")
+		v1.GET("/login", api.GetMockStandard)
+		v1.GET("/account", api.GetMockStandard)
+		registerGroup := v1.Group("register")
 		{
-			userGroup.GET("/register", api.RegisterUser)
+			registerGroup.GET("/client", api.GetMockStandard)
+			registerGroup.GET("/company", api.GetMockStandard)
 		}
 	}
 
