@@ -9,6 +9,7 @@ import (
 
 type ClientService interface {
 	Signup(request *api.ClientRegister) (database.ClientDB, error)
+	GetClient(id uint) (database.ClientDB, error)
 }
 
 type clientService struct {
@@ -30,6 +31,14 @@ func (service *clientService) Signup(request *api.ClientRegister) (database.Clie
 		Type:         request.Type,
 	}
 	service.repository.Save(client)
+	return *client, nil
+}
+
+func (service *clientService) GetClient(id uint) (database.ClientDB, error) {
+	client, err := service.repository.GetByID(id)
+	if err != nil {
+		return database.ClientDB{}, err
+	}
 	return *client, nil
 }
 

@@ -10,6 +10,7 @@ var PostgresPassword string
 var PostgresDB string
 var PostgresHost string
 var PostgresPort string
+var KeyJWT string
 
 func InitEnv() error {
 	err := godotenv.Load()
@@ -21,6 +22,7 @@ func InitEnv() error {
 	PostgresDB = os.Getenv("POSTGRES_DB")
 	PostgresHost = os.Getenv("POSTGRES_HOST")
 	PostgresPort = os.Getenv("POSTGRES_PORT")
+	KeyJWT = os.Getenv("KEY_JWT")
 	return nil
 }
 

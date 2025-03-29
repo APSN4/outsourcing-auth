@@ -19,9 +19,21 @@ type ClientRegister struct {
 	*Client `json:"user"`
 }
 
+type ClientAuth struct {
+	*ClientLogin `json:"user"`
+}
+
+type ClientLogin struct {
+	*ClientToken `json:"login"`
+}
+
+type ClientToken struct {
+	Token string `json:"token"`
+}
+
 type ResponseClientRegister struct {
-	*internal.StatusResponse `json:"status"`
-	*ResponseUser            `json:"user"`
+	*internal.StatusResponse
+	*ResponseUser `json:"user"`
 }
 
 type ResponseUser struct {
