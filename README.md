@@ -12,6 +12,8 @@ POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
 PGADMIN_MAIL=your@example.com
 PGADMIN_PW=password
+KEY_JWT=secret-key-256
+LIFE_TIME_JWT=3600
 ```
 
 ### Postgres & pgAdmin
