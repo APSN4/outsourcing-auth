@@ -13,7 +13,8 @@ import (
 
 type ClientController interface {
 	Signup(c *gin.Context)
-	LoginByToken(c *gin.Context)
+	Login(c *gin.Context)
+	GetAccount(c *gin.Context)
 }
 
 type clientController struct {
@@ -32,7 +33,7 @@ func (controller clientController) Signup(c *gin.Context) {
 		return
 	}
 	tokenGenerated := security.CreateToken(false, client.ID, 60)
-	c.JSON(http.StatusOK, api.ResponseClientRegister{
+	c.JSON(http.StatusOK, api.ResponseSuccessAccess{
 		StatusResponse: &internal.StatusResponse{Status: "success"},
 		ResponseUser: &api.ResponseUser{
 			ID:    client.ID,
@@ -42,38 +43,51 @@ func (controller clientController) Signup(c *gin.Context) {
 	})
 }
 
-func (controller clientController) LoginByToken(c *gin.Context) {
+func (controller clientController) Login(c *gin.Context) {
 	request := &api.ClientAuth{}
 	if err := c.ShouldBind(request); err != nil && errors.As(err, &validator.ValidationErrors{}) {
 		api.GetErrorJSON(c, http.StatusBadRequest, "JSON is invalid")
 		return
 	}
-	tokenChecked, tokenStructure := security.CheckToken(request.ClientLogin.ClientToken.Token)
-	client, err := controller.service.GetClient(uint(tokenStructure["accessID"].(int)))
+	dbUser, jwtToken, err := controller.service.Login(request)
 	if err != nil {
-		api.GetErrorJSON(c, http.StatusPreconditionFailed, err.Error())
+		api.GetErrorJSON(c, http.StatusBadRequest, "the created jwt was faulty")
 		return
 	}
+	c.JSON(http.StatusOK, api.ResponseSuccessAccess{
+		StatusResponse: &internal.StatusResponse{Status: "success"},
+		ResponseUser: &api.ResponseUser{
+			ID:    dbUser.ID,
+			Token: jwtToken,
+			Type:  dbUser.Type,
+		},
+	})
+}
 
-	if tokenChecked {
-		c.JSON(http.StatusOK, api.ResponseClientRegister{
-			StatusResponse: &internal.StatusResponse{Status: "success"},
-			ResponseUser: &api.ResponseUser{
-				ID:    client.ID,
-				Token: request.ClientLogin.ClientToken.Token,
-				Type:  client.Type,
-			},
-		})
-	} else {
-		c.JSON(http.StatusOK, api.ResponseClientRegister{
-			StatusResponse: &internal.StatusResponse{Status: "success"},
-			ResponseUser: &api.ResponseUser{
-				ID:    client.ID,
-				Token: "expired",
-				Type:  client.Type,
-			},
-		})
+func (controller clientController) GetAccount(c *gin.Context) {
+	request := &api.TokenAccess{}
+	if err := c.ShouldBind(request); err != nil && errors.As(err, &validator.ValidationErrors{}) {
+		api.GetErrorJSON(c, http.StatusBadRequest, "JSON is invalid")
+		return
 	}
+	response, user, err := controller.service.AccessByToken(request)
+	if err != nil {
+		api.GetErrorJSON(c, http.StatusBadRequest, "The token is incorrect")
+		return
+	}
+	c.JSON(http.StatusOK, api.ResponseAccount{
+		StatusResponse: &internal.StatusResponse{Status: "success"},
+		User: struct {
+			Account api.AccountInfo `json:"account"`
+		}{Account: api.AccountInfo{
+			ID:       user.ID,
+			FullName: user.FullName,
+			Phone:    user.Phone,
+			Photo:    user.Photo,
+			Token:    response.ResponseUser.Token,
+			Type:     user.Type,
+		}},
+	})
 }
 
 func NewClientController(service service.ClientService) ClientController {

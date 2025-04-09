@@ -45,7 +45,7 @@ Authorization for companies and clients. When the user is logged in, they will h
   "user": {
     "login": {
       "email": "myemail@gmail.com",
-      "password": "hash"
+      "password_hash": "hash"
     }
   }
 }
@@ -224,7 +224,7 @@ and the server service sends a text status code, user ID, session token, and acc
 ```json
 {
   "user": {
-    "account": {
+    "login": {
       "token": "token"
     }
   }

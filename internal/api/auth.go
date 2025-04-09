@@ -24,14 +24,36 @@ type ClientAuth struct {
 }
 
 type ClientLogin struct {
-	*ClientToken `json:"login"`
+	*ClientLoginAttributes `json:"login"`
+}
+
+type ClientLoginAttributes struct {
+	Email        string `json:"email"`
+	PasswordHash string `json:"password_hash"`
 }
 
 type ClientToken struct {
 	Token string `json:"token"`
 }
 
-type ResponseClientRegister struct {
+type TokenAccess struct {
+	User struct {
+		Login struct {
+			Token string `json:"token"`
+		} `json:"login"`
+	} `json:"user"`
+}
+
+type AccountInfo struct {
+	ID       uint   `json:"id"`
+	FullName string `json:"full_name"`
+	Phone    string `json:"phone"`
+	Photo    string `json:"photo"`
+	Token    string `json:"token"`
+	Type     string `json:"type"`
+}
+
+type ResponseSuccessAccess struct {
 	*internal.StatusResponse
 	*ResponseUser `json:"user"`
 }
@@ -40,4 +62,11 @@ type ResponseUser struct {
 	ID    uint   `json:"id"`
 	Token string `json:"token"`
 	Type  string `json:"type"`
+}
+
+type ResponseAccount struct {
+	*internal.StatusResponse
+	User struct {
+		Account AccountInfo `json:"account"`
+	} `json:"user"`
 }

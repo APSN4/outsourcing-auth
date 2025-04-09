@@ -47,9 +47,11 @@ func main() {
 	v1 := r.Group("v1")
 	{
 		v1.POST("/login", func(c *gin.Context) {
-			clientController.LoginByToken(c)
+			clientController.Login(c)
 		})
-		v1.POST("/account", api.GetMockStandard)
+		v1.POST("/account", func(c *gin.Context) {
+			clientController.GetAccount(c)
+		})
 		registerGroup := v1.Group("register")
 		{
 			registerGroup.POST("/client", func(c *gin.Context) {

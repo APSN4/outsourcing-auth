@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func CreateToken(isCompany bool, accessID uint, lifetime int) string {
+func CreateToken(isCompany bool, accessID uint, lifetimeSec int) string {
 	var (
 		key []byte
 		t   *jwt.Token
@@ -20,7 +20,7 @@ func CreateToken(isCompany bool, accessID uint, lifetime int) string {
 		jwt.MapClaims{
 			"isCompany": isCompany,
 			"accessID":  accessID,
-			"lifetime":  lifetime, // in seconds
+			"lifetime":  lifetimeSec, // in seconds
 			"startTime": time.Now().Unix(),
 		})
 	s, err = t.SignedString(key)
@@ -37,7 +37,7 @@ func CheckToken(tokenS string) (bool, jwt.MapClaims) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return secretKey, nil
+		return []byte(secretKey), nil
 	})
 	if err != nil {
 		log.Println(err)
@@ -65,7 +65,7 @@ func CheckToken(tokenS string) (bool, jwt.MapClaims) {
 
 		if elapsedSeconds-lifetimeFloat > lifetimeFloat {
 			fmt.Println(elapsedSeconds, lifetimeFloat, "not ok")
-			return false, nil
+			return false, claims
 		} else {
 			fmt.Println(elapsedSeconds, lifetimeFloat, "ok")
 			return true, claims

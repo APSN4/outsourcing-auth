@@ -9,8 +9,9 @@ import (
 
 type ClientRepository interface {
 	Save(client *database.ClientDB)
-	ExistsByEmail(email string) bool
+	ExistsByEmail(email string) (bool, database.ClientDB)
 	GetByID(id uint) (*database.ClientDB, error)
+	CheckPassword(email string, PasswordHash string) (database.ClientDB, error)
 }
 
 type clientRepository struct {
@@ -21,11 +22,11 @@ func (repository *clientRepository) Save(client *database.ClientDB) {
 	repository.db.Save(client)
 }
 
-func (repository *clientRepository) ExistsByEmail(email string) bool {
+func (repository *clientRepository) ExistsByEmail(email string) (bool, database.ClientDB) {
 	var client database.ClientDB
 	result := repository.db.Model(&database.ClientDB{}).Where("email = ?", email).First(&client)
 	exists := !errors.Is(result.Error, gorm.ErrRecordNotFound)
-	return exists
+	return exists, client
 }
 
 func (repository *clientRepository) GetByID(id uint) (*database.ClientDB, error) {
@@ -39,6 +40,19 @@ func (repository *clientRepository) GetByID(id uint) (*database.ClientDB, error)
 		return nil, result.Error
 	}
 	return &client, nil
+}
+
+func (repository *clientRepository) CheckPassword(email string, PasswordHash string) (database.ClientDB, error) {
+	ok, dbUser := repository.ExistsByEmail(email)
+	if ok {
+		if dbUser.PasswordHash == PasswordHash {
+			return dbUser, nil
+		} else {
+			return database.ClientDB{}, errors.New("bad password hash")
+		}
+	} else {
+		return database.ClientDB{}, errors.New("user not found")
+	}
 }
 
 func NewClientRepository(db *gorm.DB) ClientRepository {
