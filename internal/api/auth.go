@@ -2,7 +2,7 @@ package api
 
 import "core/internal"
 
-type Register struct {
+type RegisterInfoPost struct {
 	FullName     string `json:"full_name"`
 	Email        string `json:"email"`
 	Phone        string `json:"phone"`
@@ -12,22 +12,22 @@ type Register struct {
 }
 
 type Client struct {
-	*Register `json:"register"`
+	*RegisterInfoPost `json:"register"`
 }
 
 type ClientRegister struct {
 	*Client `json:"user"`
 }
 
-type ClientAuth struct {
-	*ClientLogin `json:"user"`
+type GeneralAuth struct {
+	*GeneralLogin `json:"user"`
 }
 
-type ClientLogin struct {
-	*ClientLoginAttributes `json:"login"`
+type GeneralLogin struct {
+	*GeneralLoginAttributes `json:"login"`
 }
 
-type ClientLoginAttributes struct {
+type GeneralLoginAttributes struct {
 	Email        string `json:"email"`
 	PasswordHash string `json:"password_hash"`
 }
@@ -42,6 +42,29 @@ type TokenAccess struct {
 			Token string `json:"token"`
 		} `json:"login"`
 	} `json:"user"`
+}
+
+type UserCompanyRegister struct {
+	*CompanyRegister `json:"user"`
+}
+
+type CompanyRegister struct {
+	*CompanyInfoPost `json:"register"`
+}
+
+type CompanyInfoPost struct {
+	CompanyName   string   `json:"company_name"`
+	Email         string   `json:"email"`
+	Phone         string   `json:"phone"`
+	FullName      string   `json:"full_name"`
+	PositionAgent string   `json:"position_agent"`
+	IDCompany     string   `json:"id_company"`
+	Address       string   `json:"address"`
+	TypeService   string   `json:"type_service"`
+	PasswordHash  string   `json:"password_hash"`
+	Photo         string   `json:"photo"`
+	Documents     []string `json:"documents"`
+	Type          string   `json:"type"`
 }
 
 type AccountInfo struct {

@@ -11,7 +11,7 @@ import (
 
 type ClientService interface {
 	Signup(request *api.ClientRegister) (database.ClientDB, error)
-	Login(request *api.ClientAuth) (dbUser database.ClientDB, jwtToken string, err error)
+	Login(request *api.GeneralAuth) (dbUser database.ClientDB, jwtToken string, err error)
 	GetClient(id uint) (database.ClientDB, error)
 	AccessByToken(request *api.TokenAccess) (*api.ResponseSuccessAccess, database.ClientDB, error)
 }
@@ -46,8 +46,8 @@ func (service *clientService) GetClient(id uint) (database.ClientDB, error) {
 	return *client, nil
 }
 
-func (service *clientService) Login(request *api.ClientAuth) (dbUser database.ClientDB, jwtToken string, err error) {
-	dbUser, err = service.repository.CheckPassword(request.ClientLogin.ClientLoginAttributes.Email, request.ClientLogin.ClientLoginAttributes.PasswordHash)
+func (service *clientService) Login(request *api.GeneralAuth) (dbUser database.ClientDB, jwtToken string, err error) {
+	dbUser, err = service.repository.CheckPassword(request.GeneralLogin.GeneralLoginAttributes.Email, request.GeneralLogin.GeneralLoginAttributes.PasswordHash)
 	if err != nil {
 		return dbUser, "", err
 	}
