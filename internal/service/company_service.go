@@ -12,6 +12,8 @@ import (
 type CompanyService interface {
 	Signup(request *api.UserCompanyRegister) (database.CompanyDB, error)
 	GetCompany(id uint) (database.CompanyDB, error)
+	Login(request *api.GeneralAuth) (dbUser database.CompanyDB, jwtToken string, err error)
+	AccessByToken(request *api.TokenAccess) (*api.ResponseSuccessAccess, database.CompanyDB, error)
 }
 
 type companyService struct {
@@ -19,18 +21,18 @@ type companyService struct {
 }
 
 func (service *companyService) Signup(request *api.UserCompanyRegister) (database.CompanyDB, error) {
-	exists, _ := service.repository.ExistsByEmail(request.Email)
-	if exists {
+	exists, existsCompany, _ := service.repository.ExistsByEmail(request.Email)
+	if exists || existsCompany {
 		return database.CompanyDB{}, errors.New("email already exists")
 	}
 
 	company := &database.CompanyDB{
 		CompanyName:   request.CompanyName,
-		FullName:      request.Email,
-		PositionAgent: request.Phone,
-		IDCompany:     request.FullName,
-		Email:         request.PositionAgent,
-		Phone:         request.IDCompany,
+		FullName:      request.FullName,
+		PositionAgent: request.PositionAgent,
+		IDCompany:     request.IDCompany,
+		Email:         request.Email,
+		Phone:         request.Phone,
 		Address:       request.Address,
 		TypeService:   request.TypeService,
 		PasswordHash:  request.PasswordHash,

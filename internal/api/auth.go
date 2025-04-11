@@ -76,6 +76,22 @@ type AccountInfo struct {
 	Type     string `json:"type"`
 }
 
+type CompanyInfo struct {
+	ID            uint     `json:"id"`
+	CompanyName   string   `json:"company_name"`
+	Email         string   `json:"email"`
+	Phone         string   `json:"phone"`
+	FullName      string   `json:"full_name"`
+	PositionAgent string   `json:"position_agent"`
+	IDCompany     string   `json:"id_company"`
+	Address       string   `json:"address"`
+	TypeService   string   `json:"type_service"`
+	PasswordHash  string   `json:"password_hash"`
+	Photo         string   `json:"photo"`
+	Documents     []string `json:"documents"`
+	Type          string   `json:"type"`
+}
+
 type ResponseSuccessAccess struct {
 	*internal.StatusResponse
 	*ResponseUser `json:"user"`
@@ -91,5 +107,12 @@ type ResponseAccount struct {
 	*internal.StatusResponse
 	User struct {
 		Account AccountInfo `json:"account"`
+	} `json:"user"`
+}
+
+type ResponseAccountCompany struct {
+	*internal.StatusResponse
+	User struct {
+		Account CompanyInfo `json:"account"`
 	} `json:"user"`
 }

@@ -11,39 +11,39 @@ import (
 	"net/http"
 )
 
-type ClientController interface {
+type CompanyController interface {
 	Signup(c *gin.Context)
 	Login(c *gin.Context, request *api.GeneralAuth)
 	GetAccount(c *gin.Context, request *api.TokenAccess)
 }
 
-type clientController struct {
-	service service.ClientService
+type companyController struct {
+	service service.CompanyService
 }
 
-func (controller clientController) Signup(c *gin.Context) {
-	request := &api.ClientRegister{}
+func (controller companyController) Signup(c *gin.Context) {
+	request := &api.UserCompanyRegister{}
 	if err := c.ShouldBind(request); err != nil && errors.As(err, &validator.ValidationErrors{}) {
 		api.GetErrorJSON(c, http.StatusBadRequest, "JSON is invalid")
 		return
 	}
-	client, err := controller.service.Signup(request)
+	company, err := controller.service.Signup(request)
 	if err != nil {
 		api.GetErrorJSON(c, http.StatusPreconditionFailed, err.Error())
 		return
 	}
-	tokenGenerated := security.CreateToken(false, client.ID, 60)
+	tokenGenerated := security.CreateToken(true, company.ID, 60)
 	c.JSON(http.StatusOK, api.ResponseSuccessAccess{
 		StatusResponse: &internal.StatusResponse{Status: "success"},
 		ResponseUser: &api.ResponseUser{
-			ID:    client.ID,
+			ID:    company.ID,
 			Token: tokenGenerated,
-			Type:  client.Type,
+			Type:  company.Type,
 		},
 	})
 }
 
-func (controller clientController) Login(c *gin.Context, request *api.GeneralAuth) {
+func (controller companyController) Login(c *gin.Context, request *api.GeneralAuth) {
 	dbUser, jwtToken, err := controller.service.Login(request)
 	if err != nil {
 		api.GetErrorJSON(c, http.StatusBadRequest, "the created jwt was faulty")
@@ -59,7 +59,7 @@ func (controller clientController) Login(c *gin.Context, request *api.GeneralAut
 	})
 }
 
-func (controller clientController) GetAccount(c *gin.Context, request *api.TokenAccess) {
+func (controller companyController) GetAccount(c *gin.Context, request *api.TokenAccess) {
 	response, user, err := controller.service.AccessByToken(request)
 	if err != nil {
 		api.GetErrorJSON(c, http.StatusBadRequest, "The token is incorrect")
@@ -69,23 +69,30 @@ func (controller clientController) GetAccount(c *gin.Context, request *api.Token
 		api.GetErrorJSON(c, http.StatusForbidden, "The token has expired")
 		return
 	}
-	c.JSON(http.StatusOK, api.ResponseAccount{
+	c.JSON(http.StatusOK, api.ResponseAccountCompany{
 		StatusResponse: &internal.StatusResponse{Status: "success"},
 		User: struct {
-			Account api.AccountInfo `json:"account"`
-		}{Account: api.AccountInfo{
-			ID:       user.ID,
-			FullName: user.FullName,
-			Phone:    user.Phone,
-			Photo:    user.Photo,
-			Token:    response.ResponseUser.Token,
-			Type:     user.Type,
+			Account api.CompanyInfo `json:"account"`
+		}{Account: api.CompanyInfo{
+			ID:            user.ID,
+			CompanyName:   user.CompanyName,
+			Email:         user.Email,
+			Phone:         user.Phone,
+			FullName:      user.FullName,
+			PositionAgent: user.PositionAgent,
+			IDCompany:     user.IDCompany,
+			Address:       user.Address,
+			TypeService:   user.TypeService,
+			PasswordHash:  user.PasswordHash,
+			Photo:         user.Photo,
+			Documents:     user.Documents,
+			Type:          user.Type,
 		}},
 	})
 }
 
-func NewClientController(service service.ClientService) ClientController {
-	return &clientController{
+func NewCompanyController(service service.CompanyService) CompanyController {
+	return &companyController{
 		service: service,
 	}
 }

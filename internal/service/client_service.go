@@ -21,8 +21,8 @@ type clientService struct {
 }
 
 func (service *clientService) Signup(request *api.ClientRegister) (database.ClientDB, error) {
-	exists, _ := service.repository.ExistsByEmail(request.Email)
-	if exists {
+	exists, existsCompany, _ := service.repository.ExistsByEmail(request.Email)
+	if exists || existsCompany {
 		return database.ClientDB{}, errors.New("email already exists")
 	}
 
