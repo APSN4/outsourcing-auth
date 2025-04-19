@@ -14,6 +14,7 @@ type ClientDB struct {
 	PasswordHash string
 	Photo        string
 	Type         string
+	Permissions  pq.StringArray `gorm:"type:text[]"`
 }
 
 type CompanyDB struct {
@@ -32,4 +33,5 @@ type CompanyDB struct {
 	Documents     pq.StringArray `gorm:"type:text[]"`
 	Stars         float64
 	Type          string
+	Permissions   pq.StringArray `gorm:"type:text[]"`
 }
