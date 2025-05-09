@@ -44,6 +44,14 @@ type TokenAccess struct {
 	} `json:"user"`
 }
 
+type TokenCreateCard struct {
+	*TokenAccess
+	Card struct {
+		Title       string `json:"title"`
+		Description string `json:"description"`
+	} `json:"card"`
+}
+
 type UserCompanyRegister struct {
 	*CompanyRegister `json:"user"`
 }

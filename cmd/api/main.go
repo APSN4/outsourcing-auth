@@ -47,6 +47,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	err = db.AutoMigrate(&database.Card{})
+	if err != nil {
+		panic(err)
+	}
 
 	clientRepository := repository.NewClientRepository(db)
 	clientService := service.NewClientService(clientRepository)
@@ -70,29 +74,59 @@ func main() {
 				companyController.Login(c, request)
 			}
 		})
-		v1.POST("/account", func(c *gin.Context) {
-			request := &api.TokenAccess{}
-			if err := c.ShouldBind(request); err != nil && errors.As(err, &validator.ValidationErrors{}) {
-				api.GetErrorJSON(c, http.StatusBadRequest, "JSON is invalid")
-				return
-			}
-			ok, mapClaims := security.CheckToken(request.User.Login.Token)
-			if mapClaims == nil {
-				api.GetErrorJSON(c, http.StatusBadRequest, "The token is invalid")
-				return
-			}
-			if ok {
-				isCompany := mapClaims["isCompany"].(bool)
-				if isCompany {
-					companyController.GetAccount(c, request)
-				} else {
-					clientController.GetAccount(c, request)
+		accountGroup := v1.Group("account")
+		{
+			accountGroup.POST("/", func(c *gin.Context) {
+				request := &api.TokenAccess{}
+				if err := c.ShouldBind(request); err != nil && errors.As(err, &validator.ValidationErrors{}) {
+					api.GetErrorJSON(c, http.StatusBadRequest, "JSON is invalid")
+					return
 				}
-			} else {
-				api.GetErrorJSON(c, http.StatusForbidden, "The token had expired")
-				return
+				ok, mapClaims := security.CheckToken(request.User.Login.Token)
+				if mapClaims == nil {
+					api.GetErrorJSON(c, http.StatusBadRequest, "The token is invalid")
+					return
+				}
+				if ok {
+					isCompany := mapClaims["isCompany"].(bool)
+					if isCompany {
+						companyController.GetAccount(c, request)
+					} else {
+						clientController.GetAccount(c, request)
+					}
+				} else {
+					api.GetErrorJSON(c, http.StatusForbidden, "The token had expired")
+					return
+				}
+			})
+			cardGroup := accountGroup.Group("card")
+			{
+				cardGroup.POST("/create", func(c *gin.Context) {
+					request := &api.TokenCreateCard{}
+					if err := c.ShouldBind(request); err != nil && errors.As(err, &validator.ValidationErrors{}) {
+						api.GetErrorJSON(c, http.StatusBadRequest, "JSON is invalid")
+						return
+					}
+					ok, mapClaims := security.CheckToken(request.User.Login.Token)
+					if mapClaims == nil {
+						api.GetErrorJSON(c, http.StatusBadRequest, "The token is invalid")
+						return
+					}
+					if ok {
+						isCompany := mapClaims["isCompany"].(bool)
+						if isCompany {
+							companyController.CreateCard(c, request)
+						} else {
+							api.GetErrorJSON(c, http.StatusForbidden, "You're not a company")
+							return
+						}
+					} else {
+						api.GetErrorJSON(c, http.StatusForbidden, "The token had expired")
+						return
+					}
+				})
 			}
-		})
+		}
 		registerGroup := v1.Group("register")
 		{
 			registerGroup.POST("/client", func(c *gin.Context) {

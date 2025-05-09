@@ -15,6 +15,7 @@ type CompanyController interface {
 	Signup(c *gin.Context)
 	Login(c *gin.Context, request *api.GeneralAuth)
 	GetAccount(c *gin.Context, request *api.TokenAccess)
+	CreateCard(c *gin.Context, request *api.TokenCreateCard)
 }
 
 type companyController struct {
@@ -89,6 +90,11 @@ func (controller companyController) GetAccount(c *gin.Context, request *api.Toke
 			Type:          user.Type,
 		}},
 	})
+}
+
+// TODO: create json output and wait CreateCard func before
+func (controller companyController) CreateCard(c *gin.Context, request *api.TokenCreateCard) {
+	controller.service.CreateCard(request)
 }
 
 func NewCompanyController(service service.CompanyService) CompanyController {

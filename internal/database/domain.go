@@ -34,4 +34,14 @@ type CompanyDB struct {
 	Stars         float64
 	Type          string
 	Permissions   pq.StringArray `gorm:"type:text[]"`
+	Cards         []Card         `gorm:"foreignKey:CompanyID"`
+}
+
+type Card struct {
+	gorm.Model
+	ID          uint `gorm:"primaryKey;autoIncrement"`
+	Title       string
+	Description string
+	CompanyID   uint
+	Company     CompanyDB `gorm:"foreignKey:CompanyID"`
 }
