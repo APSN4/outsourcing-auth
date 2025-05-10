@@ -12,7 +12,7 @@ type CompanyRepository interface {
 	ExistsByEmail(email string) (exists bool, existsClient bool, companyDB database.CompanyDB)
 	GetByID(id uint) (*database.CompanyDB, error)
 	CheckPassword(email string, passwordHash string) (database.CompanyDB, error)
-	SaveCard(card *database.Card)
+	SaveCard(card *database.Card) bool
 }
 
 type companyRepository struct {
@@ -23,8 +23,13 @@ func (repository *companyRepository) Save(company *database.CompanyDB) {
 	repository.db.Save(company)
 }
 
-func (repository *companyRepository) SaveCard(card *database.Card) {
-	repository.db.Save(card)
+func (repository *companyRepository) SaveCard(card *database.Card) bool {
+	resp := repository.db.Save(card)
+	if resp != nil {
+		return true
+	} else {
+		return false
+	}
 }
 
 func (repository *companyRepository) ExistsByEmail(email string) (exists bool, existsClient bool, companyDB database.CompanyDB) {

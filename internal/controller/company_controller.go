@@ -92,9 +92,19 @@ func (controller companyController) GetAccount(c *gin.Context, request *api.Toke
 	})
 }
 
-// TODO: create json output and wait CreateCard func before
 func (controller companyController) CreateCard(c *gin.Context, request *api.TokenCreateCard) {
-	controller.service.CreateCard(request)
+	resp, card := controller.service.CreateCard(request)
+	if resp != nil {
+		api.GetErrorJSON(c, http.StatusInternalServerError, "err in CreateCard()")
+	} else {
+		json := map[string]interface{}{
+			"ID":          card.ID,
+			"Title":       card.Title,
+			"Description": card.Description,
+			"CompanyID":   card.CompanyID,
+		}
+		c.JSON(http.StatusOK, json)
+	}
 }
 
 func NewCompanyController(service service.CompanyService) CompanyController {

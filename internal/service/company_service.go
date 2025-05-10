@@ -14,7 +14,7 @@ type CompanyService interface {
 	GetCompany(id uint) (database.CompanyDB, error)
 	Login(request *api.GeneralAuth) (dbUser database.CompanyDB, jwtToken string, err error)
 	AccessByToken(request *api.TokenAccess) (*api.ResponseSuccessAccess, database.CompanyDB, error)
-	CreateCard(request *api.TokenCreateCard)
+	CreateCard(request *api.TokenCreateCard) (error, database.Card)
 }
 
 type companyService struct {
@@ -96,11 +96,11 @@ func (service *companyService) AccessByToken(request *api.TokenAccess) (*api.Res
 	}
 }
 
-func (service *companyService) CreateCard(request *api.TokenCreateCard) {
+func (service *companyService) CreateCard(request *api.TokenCreateCard) (error, database.Card) {
 	result, tokenStructure := security.CheckToken(request.User.Login.Token)
 	company, err := service.GetCompany(uint(tokenStructure["accessID"].(float64)))
 	if err != nil {
-		return
+		return err, database.Card{}
 	}
 	if result {
 		card := database.Card{
@@ -108,9 +108,14 @@ func (service *companyService) CreateCard(request *api.TokenCreateCard) {
 			Description: request.Card.Description,
 			CompanyID:   company.ID,
 		}
-		service.repository.SaveCard(&card)
+		resp := service.repository.SaveCard(&card)
+		if resp {
+			return nil, card
+		} else {
+			return errors.New("resp in CreateCard()"), database.Card{}
+		}
 	} else {
-		return
+		return err, database.Card{}
 	}
 }
 
