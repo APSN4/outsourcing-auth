@@ -125,6 +125,9 @@ func main() {
 						return
 					}
 				})
+				cardGroup.GET("/list", func(c *gin.Context) {
+					api.GetMockStandard(c)
+				})
 			}
 		}
 		registerGroup := v1.Group("register")
