@@ -7,6 +7,7 @@ import (
 	"core/internal/database/repository"
 	"core/internal/security"
 	"errors"
+	"fmt"
 )
 
 type CompanyService interface {
@@ -15,6 +16,7 @@ type CompanyService interface {
 	Login(request *api.GeneralAuth) (dbUser database.CompanyDB, jwtToken string, err error)
 	AccessByToken(request *api.TokenAccess) (*api.ResponseSuccessAccess, database.CompanyDB, error)
 	CreateCard(request *api.TokenCreateCard) (error, database.Card)
+	ListCard(request *api.TokenListCard) (error, []database.Card)
 }
 
 type companyService struct {
@@ -116,6 +118,21 @@ func (service *companyService) CreateCard(request *api.TokenCreateCard) (error, 
 		}
 	} else {
 		return err, database.Card{}
+	}
+}
+
+func (service *companyService) ListCard(request *api.TokenListCard) (error, []database.Card) {
+	result, tokenStructure := security.CheckToken(request.TokenAccess.User.Login.Token)
+	company, err := service.GetCompany(uint(tokenStructure["accessID"].(float64)))
+	if err != nil {
+		return err, []database.Card{}
+	}
+	if result {
+		// db.Preload("Cards").First(&company, id)
+		fmt.Println(company.Cards)
+		return nil, company.Cards
+	} else {
+		return nil, []database.Card{}
 	}
 }
 

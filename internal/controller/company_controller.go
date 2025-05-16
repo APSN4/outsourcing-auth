@@ -6,6 +6,7 @@ import (
 	"core/internal/security"
 	"core/internal/service"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"net/http"
@@ -16,6 +17,7 @@ type CompanyController interface {
 	Login(c *gin.Context, request *api.GeneralAuth)
 	GetAccount(c *gin.Context, request *api.TokenAccess)
 	CreateCard(c *gin.Context, request *api.TokenCreateCard)
+	ListCard(c *gin.Context, request *api.TokenListCard)
 }
 
 type companyController struct {
@@ -104,6 +106,15 @@ func (controller companyController) CreateCard(c *gin.Context, request *api.Toke
 			"CompanyID":   card.CompanyID,
 		}
 		c.JSON(http.StatusOK, json)
+	}
+}
+
+func (controller companyController) ListCard(c *gin.Context, request *api.TokenListCard) {
+	resp, cards := controller.service.ListCard(request)
+	if resp != nil {
+		api.GetErrorJSON(c, http.StatusInternalServerError, "err in CreateCard()")
+	} else {
+		fmt.Println(cards)
 	}
 }
 

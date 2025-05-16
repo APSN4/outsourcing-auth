@@ -52,6 +52,10 @@ type TokenCreateCard struct {
 	} `json:"card"`
 }
 
+type TokenListCard struct {
+	*TokenAccess
+}
+
 type UserCompanyRegister struct {
 	*CompanyRegister `json:"user"`
 }

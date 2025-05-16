@@ -125,8 +125,29 @@ func main() {
 						return
 					}
 				})
-				cardGroup.GET("/list", func(c *gin.Context) {
-					api.GetMockStandard(c)
+				cardGroup.POST("/list", func(c *gin.Context) {
+					request := &api.TokenListCard{}
+					if err := c.ShouldBind(request); err != nil && errors.As(err, &validator.ValidationErrors{}) {
+						api.GetErrorJSON(c, http.StatusBadRequest, "JSON is invalid")
+						return
+					}
+					ok, mapClaims := security.CheckToken(request.User.Login.Token)
+					if mapClaims == nil {
+						api.GetErrorJSON(c, http.StatusBadRequest, "The token is invalid")
+						return
+					}
+					if ok {
+						isCompany := mapClaims["isCompany"].(bool)
+						if isCompany {
+							companyController.ListCard(c, request)
+						} else {
+							api.GetErrorJSON(c, http.StatusForbidden, "You're not a company")
+							return
+						}
+					} else {
+						api.GetErrorJSON(c, http.StatusForbidden, "The token had expired")
+						return
+					}
 				})
 			}
 		}
