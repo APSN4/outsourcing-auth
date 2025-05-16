@@ -1,6 +1,10 @@
 ## Microservice outsourcing-auth
 
 ## 🚀 How to run
+1. `git clone git@github.com:APSN4/outsourcing-auth.git`.
+2. `cd outsourcing-auth`.
+3. Create an env file in the root directory.
+4. `docker-compose up -d`
 
 ### ENV:
 `.env` - file with secrets.  
@@ -8,7 +12,7 @@
 POSTGRES_USER=user
 POSTGRES_PW=password
 POSTGRES_DB=outsourcing
-POSTGRES_HOST=localhost
+POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 PGADMIN_MAIL=your@example.com
 PGADMIN_PW=password

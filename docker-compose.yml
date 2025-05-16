@@ -8,14 +8,34 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
+    networks:
+      - goapp-network
     restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4:latest
+  goapp:
+    container_name: goapp-auth
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    networks:
+      - goapp-network
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_MAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PW}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${POSTGRES_USER}
+      - DB_PASSWORD=${POSTGRES_PW}
+      - DB_NAME=${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
-      - "5050:80"
-    restart: always
+      - "8080:8080"
+
+networks:
+  goapp-network:
+    driver: bridge
