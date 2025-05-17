@@ -329,9 +329,9 @@ This API provides interaction with company service cards.
 {
   "card": {
     "company_id": 1,
-    "description": "This is a title",
+    "description": "This is a description",
     "id": 1,
-    "title": "This is a description"
+    "title": "This is a title"
   }
 }
 ```
