@@ -98,13 +98,15 @@ func (controller companyController) CreateCard(c *gin.Context, request *api.Toke
 	if resp != nil {
 		api.GetErrorJSON(c, http.StatusInternalServerError, "err in CreateCard()")
 	} else {
-		json := map[string]interface{}{
-			"id":          card.ID,
-			"title":       card.Title,
-			"description": card.Description,
-			"company_id":  card.CompanyID,
+		response := map[string]interface{}{
+			"card": map[string]interface{}{
+				"id":          card.ID,
+				"title":       card.Title,
+				"description": card.Description,
+				"company_id":  card.CompanyID,
+			},
 		}
-		c.JSON(http.StatusOK, json)
+		c.JSON(http.StatusOK, response)
 	}
 }
 

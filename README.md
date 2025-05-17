@@ -4,7 +4,7 @@
 1. `git clone git@github.com:APSN4/outsourcing-auth.git`.
 2. `cd outsourcing-auth`.
 3. Create an env file in the root directory.
-4. `docker-compose up -d`
+4. `docker-compose up -d --build`
 
 ### ENV:
 `.env` - file with secrets.  
@@ -284,6 +284,106 @@ the server service will send a text status code, user ID, company name, stars, e
       "type": "company"
     }
   }
+}
+```
+
+----------
+### Cards system [Create]
+
+This API provides interaction with company service cards.
+
+**URL** : `v1/account/card/create`
+
+**Method** : `POST`
+
+**Auth required** : YES
+
+**Permissions required** : None
+
+**Attributes:**
+* Token
+* Title
+* Description
+
+```json
+{
+  "user": {
+    "login": {
+      "token": "token"
+    }
+  },
+  "card": {
+    "title": "This is a title",
+    "description": "This is a description"
+  }
+}
+```
+
+### Success Response
+
+**Code** : `200 OK`
+
+**Content examples**
+
+```json
+{
+  "card": {
+    "company_id": 1,
+    "description": "This is a title",
+    "id": 1,
+    "title": "This is a description"
+  }
+}
+```
+
+----------
+### Cards system [List]
+
+This API provides interaction with company service cards.
+
+**URL** : `v1/account/card/list`
+
+**Method** : `POST`
+
+**Auth required** : YES
+
+**Permissions required** : None
+
+**Attributes:**
+* Token
+
+```json
+{
+  "user": {
+    "login": {
+      "token": "token"
+    }
+  }
+}
+```
+
+### Success Response
+
+**Code** : `200 OK`
+
+**Content examples**
+
+```json
+{
+  "cards": [
+    {
+      "id": 1,
+      "title": "This is a title",
+      "description": "This is a description",
+      "company_id": 1
+    },
+    {
+      "id": 2,
+      "title": "This is a title2",
+      "description": "This is a description2",
+      "company_id": 1
+    }
+  ]
 }
 ```
 
