@@ -13,15 +13,26 @@ type CompanyRepository interface {
 	GetByID(id uint) (*database.CompanyDB, error)
 	CheckPassword(email string, passwordHash string) (database.CompanyDB, error)
 	SaveCard(card *database.Card) bool
-	PreloadDB(name string, company *database.CompanyDB)
+	PreloadDB(name string, company *database.CompanyDB, limit int, page int)
 }
 
 type companyRepository struct {
 	db *gorm.DB
 }
 
-func (repository *companyRepository) PreloadDB(name string, company *database.CompanyDB) {
-	repository.db.Preload(name).First(&company, company.ID)
+func (repository *companyRepository) PreloadDB(name string, company *database.CompanyDB, limit int, page int) {
+	query := repository.db
+
+	if limit > 0 {
+		offset := page * limit
+		query = query.Preload(name, func(db *gorm.DB) *gorm.DB {
+			return db.Limit(limit).Offset(offset)
+		})
+	} else {
+		query = query.Preload(name)
+	}
+
+	query.First(&company, company.ID)
 }
 
 func (repository *companyRepository) Save(company *database.CompanyDB) {

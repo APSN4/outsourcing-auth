@@ -136,10 +136,12 @@ func main() {
 						api.GetErrorJSON(c, http.StatusBadRequest, "The token is invalid")
 						return
 					}
+					limit := c.Query("limit")
+					page := c.Query("page")
 					if ok {
 						isCompany := mapClaims["isCompany"].(bool)
 						if isCompany {
-							companyController.ListCard(c, request)
+							companyController.ListCard(c, request, limit, page)
 						} else {
 							api.GetErrorJSON(c, http.StatusForbidden, "You're not a company")
 							return

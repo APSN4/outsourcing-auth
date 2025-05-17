@@ -339,7 +339,9 @@ This API provides interaction with company service cards.
 ----------
 ### Cards system [List]
 
-This API provides interaction with company service cards.
+This API provides interaction with company service cards.  
+You can use a queries in POST request. Available: `limit` and `page`.  
+This create opportunities for pagination.
 
 **URL** : `v1/account/card/list`
 
@@ -377,6 +379,88 @@ This API provides interaction with company service cards.
       "description": "This is a description",
       "company_id": 1
     },
+    {
+      "id": 2,
+      "title": "This is a title2",
+      "description": "This is a description2",
+      "company_id": 1
+    }
+  ]
+}
+```
+#### 📌 We can change limit:
+
+**URL** : `v1/account/card/list?limit=1&page=0`
+
+**Method** : `POST`
+
+**Auth required** : YES
+
+**Permissions required** : None
+
+**Attributes:**
+* Token
+
+```json
+{
+  "user": {
+    "login": {
+      "token": "token"
+    }
+  }
+}
+```
+
+### Success Response
+
+**Code** : `200 OK`
+
+**Content examples**
+
+```json
+{
+  "cards": [
+    {
+      "id": 1,
+      "title": "This is a title",
+      "description": "This is a description",
+      "company_id": 1
+    }
+  ]
+}
+```
+#### 📌 We can change pages:
+
+**URL** : `v1/account/card/list?limit=1&page=1`
+
+**Method** : `POST`
+
+**Auth required** : YES
+
+**Permissions required** : None
+
+**Attributes:**
+* Token
+
+```json
+{
+  "user": {
+    "login": {
+      "token": "token"
+    }
+  }
+}
+```
+
+### Success Response
+
+**Code** : `200 OK`
+
+**Content examples**
+
+```json
+{
+  "cards": [
     {
       "id": 2,
       "title": "This is a title2",

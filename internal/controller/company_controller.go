@@ -16,7 +16,7 @@ type CompanyController interface {
 	Login(c *gin.Context, request *api.GeneralAuth)
 	GetAccount(c *gin.Context, request *api.TokenAccess)
 	CreateCard(c *gin.Context, request *api.TokenCreateCard)
-	ListCard(c *gin.Context, request *api.TokenListCard)
+	ListCard(c *gin.Context, request *api.TokenListCard, limit string, page string)
 }
 
 type companyController struct {
@@ -110,8 +110,8 @@ func (controller companyController) CreateCard(c *gin.Context, request *api.Toke
 	}
 }
 
-func (controller companyController) ListCard(c *gin.Context, request *api.TokenListCard) {
-	resp, cards := controller.service.ListCard(request)
+func (controller companyController) ListCard(c *gin.Context, request *api.TokenListCard, limit string, page string) {
+	resp, cards := controller.service.ListCard(request, limit, page)
 	if resp != nil {
 		api.GetErrorJSON(c, http.StatusInternalServerError, "err in CreateCard()")
 	} else {

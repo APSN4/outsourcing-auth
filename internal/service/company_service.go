@@ -7,7 +7,7 @@ import (
 	"core/internal/database/repository"
 	"core/internal/security"
 	"errors"
-	"fmt"
+	"strconv"
 )
 
 type CompanyService interface {
@@ -16,7 +16,7 @@ type CompanyService interface {
 	Login(request *api.GeneralAuth) (dbUser database.CompanyDB, jwtToken string, err error)
 	AccessByToken(request *api.TokenAccess) (*api.ResponseSuccessAccess, database.CompanyDB, error)
 	CreateCard(request *api.TokenCreateCard) (error, database.Card)
-	ListCard(request *api.TokenListCard) (error, []database.Card)
+	ListCard(request *api.TokenListCard, limit string, page string) (error, []database.Card)
 }
 
 type companyService struct {
@@ -121,15 +121,22 @@ func (service *companyService) CreateCard(request *api.TokenCreateCard) (error, 
 	}
 }
 
-func (service *companyService) ListCard(request *api.TokenListCard) (error, []database.Card) {
+func (service *companyService) ListCard(request *api.TokenListCard, limit string, page string) (error, []database.Card) {
 	result, tokenStructure := security.CheckToken(request.TokenAccess.User.Login.Token)
 	company, err := service.GetCompany(uint(tokenStructure["accessID"].(float64)))
 	if err != nil {
 		return err, []database.Card{}
 	}
 	if result {
-		service.repository.PreloadDB("Cards", &company)
-		fmt.Println(company.Cards)
+		limitI, err := strconv.Atoi(limit)
+		if err != nil && limit != "" {
+			return err, []database.Card{}
+		}
+		pageI, err := strconv.Atoi(page)
+		if err != nil && page != "" {
+			return err, []database.Card{}
+		}
+		service.repository.PreloadDB("Cards", &company, limitI, pageI)
 		return nil, company.Cards
 	} else {
 		return nil, []database.Card{}
