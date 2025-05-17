@@ -52,6 +52,13 @@ type TokenCreateCard struct {
 	} `json:"card"`
 }
 
+type TokenDeleteCard struct {
+	*TokenAccess
+	Card struct {
+		ID int `json:"id"`
+	}
+}
+
 type TokenListCard struct {
 	*TokenAccess
 }

@@ -14,6 +14,7 @@ type CompanyRepository interface {
 	CheckPassword(email string, passwordHash string) (database.CompanyDB, error)
 	SaveCard(card *database.Card) bool
 	PreloadDB(name string, company *database.CompanyDB, limit int, page int)
+	DeleteCard(id int) bool
 }
 
 type companyRepository struct {
@@ -41,6 +42,15 @@ func (repository *companyRepository) Save(company *database.CompanyDB) {
 
 func (repository *companyRepository) SaveCard(card *database.Card) bool {
 	resp := repository.db.Save(card)
+	if resp != nil {
+		return true
+	} else {
+		return false
+	}
+}
+
+func (repository *companyRepository) DeleteCard(id int) bool {
+	resp := repository.db.Delete(&database.Card{}, id)
 	if resp != nil {
 		return true
 	} else {

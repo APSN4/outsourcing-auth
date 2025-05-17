@@ -340,8 +340,7 @@ This API provides interaction with company service cards.
 ### Cards system [List]
 
 This API provides interaction with company service cards.  
-You can use a queries in POST request. Available: `limit` and `page`.  
-This create opportunities for pagination.
+You can use queries in a POST request. Available parameters are `limit` and `page`, which create opportunities for pagination.  
 
 **URL** : `v1/account/card/list`
 
@@ -471,6 +470,50 @@ This create opportunities for pagination.
 }
 ```
 
+----------
+### Cards system [Delete]
+
+This API provides interaction with company service cards.  
+This will write a `deleted_at` mark and store it in the database without access.  
+
+**URL** : `v1/account/card/delete`
+
+**Method** : `POST`
+
+**Auth required** : YES
+
+**Permissions required** : None
+
+**Attributes:**
+* Token
+
+```json
+{
+  "user": {
+    "login": {
+      "token": "token"
+    }
+  },
+  "card": {
+    "id": 1
+  }
+}
+```
+
+### Success Response
+
+**Code** : `200 OK`
+
+**Content examples**
+
+```json
+{
+  "card": {
+    "action": "deleted",
+    "status": "success"
+  }
+}
+```
 ----------
 
 ## Notes

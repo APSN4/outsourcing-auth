@@ -17,6 +17,7 @@ type CompanyController interface {
 	GetAccount(c *gin.Context, request *api.TokenAccess)
 	CreateCard(c *gin.Context, request *api.TokenCreateCard)
 	ListCard(c *gin.Context, request *api.TokenListCard, limit string, page string)
+	DeleteCard(c *gin.Context, request *api.TokenDeleteCard)
 }
 
 type companyController struct {
@@ -104,6 +105,21 @@ func (controller companyController) CreateCard(c *gin.Context, request *api.Toke
 				"title":       card.Title,
 				"description": card.Description,
 				"company_id":  card.CompanyID,
+			},
+		}
+		c.JSON(http.StatusOK, response)
+	}
+}
+
+func (controller companyController) DeleteCard(c *gin.Context, request *api.TokenDeleteCard) {
+	err, _ := controller.service.DeleteCard(request)
+	if err != nil {
+		api.GetErrorJSON(c, http.StatusInternalServerError, "err in DeleteCard()")
+	} else {
+		response := map[string]interface{}{
+			"card": map[string]interface{}{
+				"status": "success",
+				"action": "deleted",
 			},
 		}
 		c.JSON(http.StatusOK, response)

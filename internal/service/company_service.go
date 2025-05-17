@@ -17,6 +17,7 @@ type CompanyService interface {
 	AccessByToken(request *api.TokenAccess) (*api.ResponseSuccessAccess, database.CompanyDB, error)
 	CreateCard(request *api.TokenCreateCard) (error, database.Card)
 	ListCard(request *api.TokenListCard, limit string, page string) (error, []database.Card)
+	DeleteCard(request *api.TokenDeleteCard) (error, bool)
 }
 
 type companyService struct {
@@ -118,6 +119,24 @@ func (service *companyService) CreateCard(request *api.TokenCreateCard) (error, 
 		}
 	} else {
 		return err, database.Card{}
+	}
+}
+
+func (service *companyService) DeleteCard(request *api.TokenDeleteCard) (error, bool) {
+	result, tokenStructure := security.CheckToken(request.User.Login.Token)
+	_, err := service.GetCompany(uint(tokenStructure["accessID"].(float64)))
+	if err != nil {
+		return err, false
+	}
+	if result {
+		resp := service.repository.DeleteCard(request.Card.ID)
+		if resp {
+			return nil, resp
+		} else {
+			return err, false
+		}
+	} else {
+		return err, false
 	}
 }
 
