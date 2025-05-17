@@ -56,6 +56,17 @@ type TokenListCard struct {
 	*TokenAccess
 }
 
+type CardResponse struct {
+	ID          uint   `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	CompanyID   uint   `json:"company_id"`
+}
+
+type CardsWrapper struct {
+	Cards []CardResponse `json:"cards"`
+}
+
 type UserCompanyRegister struct {
 	*CompanyRegister `json:"user"`
 }

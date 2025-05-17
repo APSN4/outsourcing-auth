@@ -6,7 +6,6 @@ import (
 	"core/internal/security"
 	"core/internal/service"
 	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"net/http"
@@ -100,10 +99,10 @@ func (controller companyController) CreateCard(c *gin.Context, request *api.Toke
 		api.GetErrorJSON(c, http.StatusInternalServerError, "err in CreateCard()")
 	} else {
 		json := map[string]interface{}{
-			"ID":          card.ID,
-			"Title":       card.Title,
-			"Description": card.Description,
-			"CompanyID":   card.CompanyID,
+			"id":          card.ID,
+			"title":       card.Title,
+			"description": card.Description,
+			"company_id":  card.CompanyID,
 		}
 		c.JSON(http.StatusOK, json)
 	}
@@ -114,7 +113,16 @@ func (controller companyController) ListCard(c *gin.Context, request *api.TokenL
 	if resp != nil {
 		api.GetErrorJSON(c, http.StatusInternalServerError, "err in CreateCard()")
 	} else {
-		fmt.Println(cards)
+		var jsonList api.CardsWrapper
+		for _, card := range cards {
+			jsonList.Cards = append(jsonList.Cards, api.CardResponse{
+				ID:          card.ID,
+				Title:       card.Title,
+				Description: card.Description,
+				CompanyID:   card.CompanyID,
+			})
+		}
+		c.JSON(http.StatusOK, jsonList)
 	}
 }
 

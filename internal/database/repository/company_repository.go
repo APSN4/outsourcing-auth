@@ -13,10 +13,15 @@ type CompanyRepository interface {
 	GetByID(id uint) (*database.CompanyDB, error)
 	CheckPassword(email string, passwordHash string) (database.CompanyDB, error)
 	SaveCard(card *database.Card) bool
+	PreloadDB(name string, company *database.CompanyDB)
 }
 
 type companyRepository struct {
 	db *gorm.DB
+}
+
+func (repository *companyRepository) PreloadDB(name string, company *database.CompanyDB) {
+	repository.db.Preload(name).First(&company, company.ID)
 }
 
 func (repository *companyRepository) Save(company *database.CompanyDB) {

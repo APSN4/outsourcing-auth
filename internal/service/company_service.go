@@ -128,7 +128,7 @@ func (service *companyService) ListCard(request *api.TokenListCard) (error, []da
 		return err, []database.Card{}
 	}
 	if result {
-		// db.Preload("Cards").First(&company, id)
+		service.repository.PreloadDB("Cards", &company)
 		fmt.Println(company.Cards)
 		return nil, company.Cards
 	} else {
