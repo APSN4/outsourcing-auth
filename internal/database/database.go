@@ -1,7 +1,6 @@
 package database
 
 import (
-	"core/internal"
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,7 +12,7 @@ import (
 
 func InitialiseDB(dbConfig *DbConfig) (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
-		internal.PostgresHost, internal.PostgresUser, internal.PostgresPassword, internal.PostgresDB, internal.PostgresPort)
+		dbConfig.Host, dbConfig.User, dbConfig.Password, dbConfig.DbName, dbConfig.Port)
 	newLogger := logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
 		logger.Config{
