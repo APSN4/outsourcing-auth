@@ -8,6 +8,6 @@ RUN go get -d -v ./...
 
 RUN go build -o app ./cmd/api
 
-EXPOSE 8070
+EXPOSE 8080
 
 CMD ["./app"]

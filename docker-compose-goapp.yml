@@ -11,4 +11,4 @@ services:
       - DB_PASSWORD=${POSTGRES_PW}
       - DB_NAME=${POSTGRES_DB}
     ports:
-      - "8070:8070"
+      - "8080:8070"
