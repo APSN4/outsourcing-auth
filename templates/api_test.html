@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест API - Платформа аутсорсинга</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button.success {
+            background: #28a745;
+        }
+        button.danger {
+            background: #dc3545;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .response {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 Тестирование API платформы аутсорсинга</h1>
+    
+    <div class="container">
+        <h2>🔐 Авторизация</h2>
+        <div class="grid">
+            <div>
+                <h3>Регистрация клиента</h3>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="clientEmail" placeholder="client@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль:</label>
+                    <input type="password" id="clientPassword" placeholder="password123">
+                </div>
+                <div class="form-group">
+                    <label>Имя:</label>
+                    <input type="text" id="clientName" placeholder="Иван Иванов">
+                </div>
+                <div class="form-group">
+                    <label>Телефон:</label>
+                    <input type="text" id="clientPhone" placeholder="+7 (999) 123-45-67">
+                </div>
+                <button onclick="registerClient()">Зарегистрироваться как клиент</button>
+            </div>
+            
+            <div>
+                <h3>Регистрация компании</h3>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="companyEmail" placeholder="company@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Пароль:</label>
+                    <input type="password" id="companyPassword" placeholder="password123">
+                </div>
+                <div class="form-group">
+                    <label>Название компании:</label>
+                    <input type="text" id="companyName" placeholder="ООО Сервис">
+                </div>
+                <div class="form-group">
+                    <label>ФИО представителя:</label>
+                    <input type="text" id="companyRepName" placeholder="Петр Петров">
+                </div>
+                <button onclick="registerCompany()">Зарегистрироваться как компания</button>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <h3>Вход в систему</h3>
+            <label>Email:</label>
+            <input type="email" id="loginEmail" placeholder="email@example.com">
+            <label>Пароль:</label>
+            <input type="password" id="loginPassword" placeholder="password">
+            <button onclick="login()">Войти</button>
+            <button onclick="logout()" class="danger">Выйти</button>
+        </div>
+        
+        <div class="response" id="authResponse">Ответы авторизации появятся здесь...</div>
+    </div>
+
+    <div class="container">
+        <h2>🏷️ Карточки услуг</h2>
+        <div class="grid">
+            <div>
+                <h3>Получить все карточки</h3>
+                <button onclick="getAllCards()">Загрузить карточки</button>
+            </div>
+            
+            <div>
+                <h3>Создать карточку (компания)</h3>
+                <label>Название:</label>
+                <input type="text" id="cardTitle" placeholder="Уборка квартир">
+                <label>Описание:</label>
+                <textarea id="cardDescription" placeholder="Профессиональная уборка..."></textarea>
+                <label>Категория:</label>
+                <input type="text" id="cardCategory" placeholder="Клининг">
+                <label>Локация:</label>
+                <input type="text" id="cardLocation" placeholder="Центральный район">
+                <label>Цена:</label>
+                <input type="number" id="cardPrice" placeholder="2000">
+                <button onclick="createCard()">Создать карточку</button>
+            </div>
+        </div>
+        
+        <div class="response" id="cardsResponse">Ответы по карточкам появятся здесь...</div>
+    </div>
+
+    <div class="container">
+        <h2>💰 Баланс и транзакции</h2>
+        <div class="grid">
+            <div>
+                <h3>Баланс</h3>
+                <button onclick="getBalance()">Проверить баланс</button>
+                <br>
+                <label>Сумма пополнения:</label>
+                <input type="number" id="depositAmount" placeholder="1000">
+                <button onclick="depositBalance()" class="success">Пополнить (клиент)</button>
+            </div>
+            
+            <div>
+                <h3>Транзакции</h3>
+                <button onclick="getTransactions()">История операций</button>
+            </div>
+        </div>
+        
+        <div class="response" id="balanceResponse">Ответы по балансу появятся здесь...</div>
+    </div>
+
+    <div class="container">
+        <h2>📋 Заказы</h2>
+        <div class="grid">
+            <div>
+                <h3>Создать заказ (клиент)</h3>
+                <label>ID компании:</label>
+                <input type="number" id="orderCompanyId" placeholder="1">
+                <label>ID карточки:</label>
+                <input type="number" id="orderCardId" placeholder="1">
+                <label>Описание:</label>
+                <textarea id="orderDescription" placeholder="Дополнительные требования..."></textarea>
+                <button onclick="createOrder()">Создать заказ</button>
+            </div>
+            
+            <div>
+                <h3>Управление заказами</h3>
+                <label>ID заказа:</label>
+                <input type="number" id="managementOrderId" placeholder="1">
+                <button onclick="payOrder()" class="success">Оплатить заказ</button>
+                <button onclick="startOrder()">Начать выполнение</button>
+                <button onclick="finishOrder()">Завершить заказ</button>
+                <button onclick="cancelOrder()" class="danger">Отменить заказ</button>
+            </div>
+        </div>
+        
+        <button onclick="getOrders()">Мои заказы</button>
+        
+        <div class="response" id="ordersResponse">Ответы по заказам появятся здесь...</div>
+    </div>
+
+    <script>
+        const API_URL = 'https://auth.tomsk-center.ru';
+        let authToken = localStorage.getItem('authToken');
+
+        function updateTokenDisplay() {
+            const display = document.getElementById('authResponse');
+            if (authToken) {
+                display.innerHTML = `✅ Авторизован. Токен: ${authToken.substring(0, 20)}...`;
+            } else {
+                display.innerHTML = '❌ Не авторизован';
+            }
+        }
+
+        function displayResponse(elementId, response, isError = false) {
+            const element = document.getElementById(elementId);
+            element.className = isError ? 'response error' : 'response';
+            element.innerHTML = JSON.stringify(response, null, 2);
+        }
+
+        async function makeRequest(url, options = {}) {
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+                
+                const data = await response.json();
+                return { data, status: response.status, ok: response.ok };
+            } catch (error) {
+                return { error: error.message, status: 0, ok: false };
+            }
+        }
+
+        // Авторизация
+        async function registerClient() {
+            const data = {
+                user: {
+                    register: {
+                        full_name: document.getElementById('clientName').value,
+                        email: document.getElementById('clientEmail').value,
+                        phone: document.getElementById('clientPhone').value,
+                        password: document.getElementById('clientPassword').value,
+                        photo: '',
+                        type: 'client'
+                    }
+                }
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/register/client`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            if (result.ok && result.data.user?.token) {
+                authToken = result.data.user.token;
+                localStorage.setItem('authToken', authToken);
+                updateTokenDisplay();
+            }
+
+            displayResponse('authResponse', result.data || result.error, !result.ok);
+        }
+
+        async function registerCompany() {
+            const data = {
+                user: {
+                    register: {
+                        company_name: document.getElementById('companyName').value,
+                        full_name: document.getElementById('companyRepName').value,
+                        email: document.getElementById('companyEmail').value,
+                        phone: '+7 (999) 888-77-66',
+                        password_hash: document.getElementById('companyPassword').value,
+                        position_agent: 'Директор',
+                        id_company: 'ООО12345',
+                        address: 'г. Томск',
+                        type_service: 'Различные услуги',
+                        photo: '',
+                        documents: [],
+                        type: 'company'
+                    }
+                }
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/register/company`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            if (result.ok && result.data.user?.token) {
+                authToken = result.data.user.token;
+                localStorage.setItem('authToken', authToken);
+                updateTokenDisplay();
+            }
+
+            displayResponse('authResponse', result.data || result.error, !result.ok);
+        }
+
+        async function login() {
+            const data = {
+                user: {
+                    login: {
+                        email: document.getElementById('loginEmail').value,
+                        password_hash: document.getElementById('loginPassword').value
+                    }
+                }
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/login`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            if (result.ok && result.data.user?.token) {
+                authToken = result.data.user.token;
+                localStorage.setItem('authToken', authToken);
+                updateTokenDisplay();
+            }
+
+            displayResponse('authResponse', result.data || result.error, !result.ok);
+        }
+
+        function logout() {
+            authToken = null;
+            localStorage.removeItem('authToken');
+            updateTokenDisplay();
+        }
+
+        // Карточки
+        async function getAllCards() {
+            const result = await makeRequest(`${API_URL}/cards?page=1&limit=10`);
+            displayResponse('cardsResponse', result.data || result.error, !result.ok);
+        }
+
+        async function createCard() {
+            if (!authToken) {
+                displayResponse('cardsResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = {
+                user: { login: { token: authToken } },
+                card: {
+                    title: document.getElementById('cardTitle').value,
+                    description: document.getElementById('cardDescription').value,
+                    category: document.getElementById('cardCategory').value,
+                    location: document.getElementById('cardLocation').value,
+                    price: parseFloat(document.getElementById('cardPrice').value)
+                }
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/account/card/create`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('cardsResponse', result.data || result.error, !result.ok);
+        }
+
+        // Баланс
+        async function getBalance() {
+            if (!authToken) {
+                displayResponse('balanceResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = { user: { login: { token: authToken } } };
+            const result = await makeRequest(`${API_URL}/v1/account/balance`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('balanceResponse', result.data || result.error, !result.ok);
+        }
+
+        async function depositBalance() {
+            if (!authToken) {
+                displayResponse('balanceResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = {
+                user: { login: { token: authToken } },
+                amount: parseFloat(document.getElementById('depositAmount').value)
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/account/balance/deposit`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('balanceResponse', result.data || result.error, !result.ok);
+        }
+
+        async function getTransactions() {
+            if (!authToken) {
+                displayResponse('balanceResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = { user: { login: { token: authToken } } };
+            const result = await makeRequest(`${API_URL}/v1/account/balance/transactions?page=1&limit=10`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('balanceResponse', result.data || result.error, !result.ok);
+        }
+
+        // Заказы
+        async function createOrder() {
+            if (!authToken) {
+                displayResponse('ordersResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = {
+                user: { login: { token: authToken } },
+                order: {
+                    company_id: parseInt(document.getElementById('orderCompanyId').value),
+                    card_id: parseInt(document.getElementById('orderCardId').value),
+                    description: document.getElementById('orderDescription').value
+                }
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/account/order/create`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('ordersResponse', result.data || result.error, !result.ok);
+        }
+
+        async function getOrders() {
+            if (!authToken) {
+                displayResponse('ordersResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = { user: { login: { token: authToken } } };
+            const result = await makeRequest(`${API_URL}/v1/account/order/list?page=1&limit=10`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('ordersResponse', result.data || result.error, !result.ok);
+        }
+
+        async function payOrder() {
+            if (!authToken) {
+                displayResponse('ordersResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = {
+                user: { login: { token: authToken } },
+                order_id: parseInt(document.getElementById('managementOrderId').value)
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/account/order/pay`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('ordersResponse', result.data || result.error, !result.ok);
+        }
+
+        async function startOrder() {
+            if (!authToken) {
+                displayResponse('ordersResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = {
+                user: { login: { token: authToken } },
+                order_id: parseInt(document.getElementById('managementOrderId').value)
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/account/order/start`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('ordersResponse', result.data || result.error, !result.ok);
+        }
+
+        async function finishOrder() {
+            if (!authToken) {
+                displayResponse('ordersResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = {
+                user: { login: { token: authToken } },
+                order_id: parseInt(document.getElementById('managementOrderId').value)
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/account/order/finish`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('ordersResponse', result.data || result.error, !result.ok);
+        }
+
+        async function cancelOrder() {
+            if (!authToken) {
+                displayResponse('ordersResponse', 'Требуется авторизация', true);
+                return;
+            }
+
+            const data = {
+                user: { login: { token: authToken } },
+                order_id: parseInt(document.getElementById('managementOrderId').value)
+            };
+
+            const result = await makeRequest(`${API_URL}/v1/account/order/cancel`, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+
+            displayResponse('ordersResponse', result.data || result.error, !result.ok);
+        }
+
+        // Инициализация
+        updateTokenDisplay();
+    </script>
+</body>
+</html>

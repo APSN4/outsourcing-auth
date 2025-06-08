@@ -47,16 +47,17 @@ type TokenAccess struct {
 type TokenCreateCard struct {
 	*TokenAccess
 	Card struct {
-		Title       string `json:"title"`
-		Description string `json:"description"`
+		Title       string  `json:"title"`
+		Description string  `json:"description"`
+		Category    string  `json:"category"`
+		Location    string  `json:"location"`
+		Price       float64 `json:"price"`
 	} `json:"card"`
 }
 
 type TokenDeleteCard struct {
 	*TokenAccess
-	Card struct {
-		ID int `json:"id"`
-	}
+	CardID uint `json:"card_id"`
 }
 
 type TokenListCard struct {
